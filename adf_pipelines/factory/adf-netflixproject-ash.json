@@ -1,0 +1,15 @@
+{
+	"name": "adf-netflixproject-ash",
+	"properties": {
+		"trustModeClaimForMi": {
+			"value": "Disabled",
+			"editable": true
+		}
+	},
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "64c444d2-f2df-4502-ad96-c872e46eab21",
+		"tenantId": "11f1310d-6024-4606-a127-82c3ff222f70"
+	}
+}

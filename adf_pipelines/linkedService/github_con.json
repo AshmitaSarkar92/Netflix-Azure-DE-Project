@@ -1,0 +1,14 @@
+{
+	"name": "github_con",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"description": "github to adf connection",
+		"annotations": [],
+		"type": "HttpServer",
+		"typeProperties": {
+			"url": "https://raw.githubusercontent.com/",
+			"enableServerCertificateValidation": true,
+			"authenticationType": "Anonymous"
+		}
+	}
+}
