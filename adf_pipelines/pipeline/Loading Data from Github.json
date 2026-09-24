@@ -131,7 +131,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"method": "GET",
-					"url": "https://raw.githubusercontent.com/AshmitaSarkar92/Netflix-Project/refs/heads/main/netflix_cast.csv"
+					"url": "https://raw.githubusercontent.com/AshmitaSarkar92/Netflix-Azure-DE-Project/refs/heads/main/source_scripts/netflix_cast.csv"
 				}
 			},
 			{
