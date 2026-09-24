@@ -16,7 +16,7 @@
 			"location": {
 				"type": "HttpServerLocation",
 				"relativeUrl": {
-					"value": "AshmitaSarkar92/Netflix-Project/refs/heads/main/@{dataset().file_name}",
+					"value": "AshmitaSarkar92/Netflix-Azure-DE-Project/refs/heads/main/source_scripts/@{dataset().file_name}",
 					"type": "Expression"
 				}
 			},
