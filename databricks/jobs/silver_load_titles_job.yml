@@ -1,0 +1,35 @@
+resources:
+  jobs:
+    Silver_Load_titles:
+      name: Silver Load titles
+      tasks:
+        - task_key: WeekdayLookup
+          notebook_task:
+            notebook_path: /Workspace/Netflix Project/5_Silverlookup
+            base_parameters:
+              weekday: "{{job.start_time.iso_weekday}}"
+            source: WORKSPACE
+        - task_key: IfWeekDay
+          depends_on:
+            - task_key: WeekdayLookup
+          condition_task:
+            op: EQUAL_TO
+            left: "{{tasks.WeekdayLookup.values.weekoutput}}"
+            right: "7"
+        - task_key: SilverMasterData
+          depends_on:
+            - task_key: IfWeekDay
+              outcome: "true"
+          notebook_task:
+            notebook_path: /Workspace/Netflix Project/4_Silver_transformation
+            source: WORKSPACE
+        - task_key: FalseNotebook
+          depends_on:
+            - task_key: IfWeekDay
+              outcome: "false"
+          notebook_task:
+            notebook_path: /Workspace/Netflix Project/6_Silver_print
+            source: WORKSPACE
+      queue:
+        enabled: true
+      performance_target: PERFORMANCE_OPTIMIZED

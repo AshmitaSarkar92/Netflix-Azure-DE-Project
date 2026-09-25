@@ -1,0 +1,30 @@
+resources:
+  jobs:
+    Bronze_to_Silver_Load:
+      name: Bronze to Silver Load
+      tasks:
+        - task_key: Lookup_folder_location
+          notebook_task:
+            notebook_path: /Workspace/Netflix Project/3_Silverlookup
+            source: WORKSPACE
+          environment_key: Lookup_folder_location_environment
+        - task_key: Silver_notebook
+          depends_on:
+            - task_key: Lookup_folder_location
+          for_each_task:
+            inputs: "{{tasks.Lookup_folder_location.values.my_file_array}}"
+            task:
+              task_key: Silver_notebook_iteration
+              notebook_task:
+                notebook_path: /Workspace/Netflix Project/2_Silver
+                base_parameters:
+                  sourcefolder: "{{input.sourcefolder}}"
+                  targetfolder: "{{input.targetfolder}}"
+                source: WORKSPACE
+      queue:
+        enabled: true
+      environments:
+        - environment_key: Lookup_folder_location_environment
+          spec:
+            environment_version: "5"
+      performance_target: PERFORMANCE_OPTIMIZED
