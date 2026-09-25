@@ -1,0 +1,15 @@
+id: 4db20fad-e2b0-4c1f-bb51-21d69b8a6e5d
+pipeline_type: WORKSPACE
+name: Gold Load
+libraries:
+  - glob:
+      include: /Workspace/Users/ashmita.databricks@gmail.com/New Pipeline 2026-09-23
+        13:36/transformations/**
+schema: netflix_elt_schema
+continuous: false
+development: false
+photon: true
+channel: CURRENT
+catalog: netflix_catalog
+serverless: true
+root_path: /Workspace/Users/ashmita.databricks@gmail.com/New Pipeline 2026-09-23 13:36
