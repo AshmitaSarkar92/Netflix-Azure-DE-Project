@@ -4,6 +4,14 @@ An end-to-end Azure data platform built around a simulated Netflix dataset — i
 
 ## Architecture Overview
 
+![Netflix Architecture Flow](screenshots/netflix_setup_ss/00-netflix_architecture_flow.png)
+
+GitHub source files are pulled in by Azure Data Factory, landed in a `raw`/`bronze` data lake via Databricks Autoloader, cleaned into Silver by Databricks Workflows (ForEach for the lookup tables, If/Else to gate the weekly master-data rebuild), modeled into governed Gold tables with Delta Live Tables under Unity Catalog, then served to Power BI through a Databricks SQL Warehouse via Partner Connect.
+
+---
+
+## Resource Group
+
 ![Resource Group Overview](screenshots/netflix_setup_ss/01-resource-group-overview.png)
 
 All resources live in a single resource group (`RG-NetflixProject`):
