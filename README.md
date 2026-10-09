@@ -4,7 +4,7 @@ An end-to-end Azure data platform built around a simulated Netflix dataset — i
 
 ## Architecture Overview
 
-![Resource Group Overview](netflix_setup_ss/01-resource-group-overview.png)
+![Resource Group Overview](screenshots/netflix_setup_ss/01-resource-group-overview.png)
 
 All resources live in a single resource group (`RG-NetflixProject`):
 
@@ -44,19 +44,19 @@ A single pipeline pulls five source files from a public GitHub repo: `netflix_ti
 
 | Step | Screenshot |
 |---|---|
-| Linked services — GitHub (HTTP) + ADLS Gen2 | ![Linked Services](netflix_adf_ss/01-linked-services-overview.png) |
-| Dataset — `ds_github` (GitHub source connection) | ![ds_github](netflix_adf_ss/02-dataset-ds-github-connection.png) |
-| Dataset — `ds_sink` (dynamic bronze/raw path) | ![ds_sink](netflix_adf_ss/03-dataset-ds-sink-connection.png) |
-| Dataset — `ds_validation` (checks `netflix_titles.csv` landed) | ![ds_validation](netflix_adf_ss/04-dataset-ds-validation-connection.png) |
-| Pipeline canvas — Web → Set Variable → Validation → ForEach | ![Pipeline Canvas](netflix_adf_ss/05-pipeline-canvas-overview.png) |
-| Web activity — pulls GitHub repo metadata | ![Web Activity](netflix_adf_ss/06-web-activity-settings.png) |
-| Set Variable — stores GitHub metadata for later use | ![Set Variable](netflix_adf_ss/07-set-variable-settings.png) |
-| Validation activity — gates the run on `netflix_titles.csv` existing in `raw` | ![Validation Activity](netflix_adf_ss/08-validation-activity-settings.png) |
-| ForEach — iterates the `p_array` parameter (one entry per lookup file) | ![ForEach Settings](netflix_adf_ss/09-foreach-settings.png) |
-| ForEach — full settings view | ![ForEach Full](netflix_adf_ss/10-foreach-settings-full.png) |
-| Copy Data — source (dynamic `file_name` per array item) | ![Copy Source](netflix_adf_ss/11-copydata-source-settings.png) |
-| Copy Data — sink (dynamic `folder_name`/`file_name` into `bronze`) | ![Copy Sink](netflix_adf_ss/12-copydata-sink-settings.png) |
-| Successful pipeline run — every activity green | ![Pipeline Run Success](netflix_adf_ss/13-pipeline-run-activity-list-success.png) |
+| Linked services — GitHub (HTTP) + ADLS Gen2 | ![Linked Services](screenshots/netflix_adf_ss/01-linked-services-overview.png) |
+| Dataset — `ds_github` (GitHub source connection) | ![ds_github](screenshots/netflix_adf_ss/02-dataset-ds-github-connection.png) |
+| Dataset — `ds_sink` (dynamic bronze/raw path) | ![ds_sink](screenshots/netflix_adf_ss/03-dataset-ds-sink-connection.png) |
+| Dataset — `ds_validation` (checks `netflix_titles.csv` landed) | ![ds_validation](screenshots/netflix_adf_ss/04-dataset-ds-validation-connection.png) |
+| Pipeline canvas — Web → Set Variable → Validation → ForEach | ![Pipeline Canvas](screenshots/netflix_adf_ss/05-pipeline-canvas-overview.png) |
+| Web activity — pulls GitHub repo metadata | ![Web Activity](screenshots/netflix_adf_ss/06-web-activity-settings.png) |
+| Set Variable — stores GitHub metadata for later use | ![Set Variable](screenshots/netflix_adf_ss/07-set-variable-settings.png) |
+| Validation activity — gates the run on `netflix_titles.csv` existing in `raw` | ![Validation Activity](screenshots/netflix_adf_ss/08-validation-activity-settings.png) |
+| ForEach — iterates the `p_array` parameter (one entry per lookup file) | ![ForEach Settings](screenshots/netflix_adf_ss/09-foreach-settings.png) |
+| ForEach — full settings view | ![ForEach Full](screenshots/netflix_adf_ss/10-foreach-settings-full.png) |
+| Copy Data — source (dynamic `file_name` per array item) | ![Copy Source](screenshots/netflix_adf_ss/11-copydata-source-settings.png) |
+| Copy Data — sink (dynamic `folder_name`/`file_name` into `bronze`) | ![Copy Sink](screenshots/netflix_adf_ss/12-copydata-sink-settings.png) |
+| Successful pipeline run — every activity green | ![Pipeline Run Success](screenshots/netflix_adf_ss/13-pipeline-run-activity-list-success.png) |
 
 **Key pattern:** a `Web` activity + `Set Variable` capture GitHub metadata, a `Validation` activity confirms the master CSV has landed before anything downstream runs, and a `ForEach` over an array parameter (`p_array`) drives a single parameterized `Copy Data` activity across all four lookup files — adding a fifth lookup table is a metadata change, not a new pipeline.
 
@@ -66,13 +66,13 @@ A single pipeline pulls five source files from a public GitHub repo: `netflix_ti
 
 | Step | Screenshot |
 |---|---|
-| All containers — `raw`, `bronze`, `silver`, `gold`, `metastore` | ![Containers Overview](netflix_setup_ss/03-datalake-containers-overview.png) |
-| `raw/netflix_titles.csv` — landed by ADF/Autoloader source | ![Raw Netflix Titles](netflix_setup_ss/04-raw-container-netflix-titles.png) |
-| `bronze` — one folder per table, plus Autoloader `checkpoints` | ![Bronze Listing](netflix_datalake_ss/01-bronze-container-listing.png) |
-| `bronze/netflix_category` — landed lookup file | ![Bronze Category File](netflix_datalake_ss/02-bronze-netflix-category-file.png) |
-| `silver/netflix_cast` — written as Delta (data + `_delta_log`) | ![Silver Cast Listing](netflix_datalake_ss/03-silver-netflix-cast-listing.png) |
-| Silver `_delta_log` — Delta transaction log | ![Silver Delta Log](netflix_datalake_ss/04-silver-netflix-cast-delta-log.png) |
-| `gold` — only Unity Catalog's internal `__unitystorage` folder | ![Gold Unitystorage](netflix_datalake_ss/05-gold-container-unitystorage.png) |
+| All containers — `raw`, `bronze`, `silver`, `gold`, `metastore` | ![Containers Overview](screenshots/netflix_setup_ss/03-datalake-containers-overview.png) |
+| `raw/netflix_titles.csv` — landed by ADF/Autoloader source | ![Raw Netflix Titles](screenshots/netflix_setup_ss/04-raw-container-netflix-titles.png) |
+| `bronze` — one folder per table, plus Autoloader `checkpoints` | ![Bronze Listing](screenshots/netflix_datalake_ss/01-bronze-container-listing.png) |
+| `bronze/netflix_category` — landed lookup file | ![Bronze Category File](screenshots/netflix_datalake_ss/02-bronze-netflix-category-file.png) |
+| `silver/netflix_cast` — written as Delta (data + `_delta_log`) | ![Silver Cast Listing](screenshots/netflix_datalake_ss/03-silver-netflix-cast-listing.png) |
+| Silver `_delta_log` — Delta transaction log | ![Silver Delta Log](screenshots/netflix_datalake_ss/04-silver-netflix-cast-delta-log.png) |
+| `gold` — only Unity Catalog's internal `__unitystorage` folder | ![Gold Unitystorage](screenshots/netflix_datalake_ss/05-gold-container-unitystorage.png) |
 
 **Note on Gold storage:** Gold tables are Unity Catalog managed tables, so their physical files live under `gold/__unitystorage/...` organized by internal IDs rather than table names — normal Unity Catalog behavior.
 
@@ -84,10 +84,10 @@ Notebook: `1_Autoloader`. Streams `raw/netflix_titles.csv` into Bronze increment
 
 | Step | Screenshot |
 |---|---|
-| Notebook overview — catalog/schema setup, checkpoint path | ![Notebook Overview](netflix_db_ss/01-notebooks-overview-1_Autoloader-createschema-checkpoint.png) |
-| `readStream` with Autoloader (`cloudFiles`, schema tracking) | ![Autoloader readStream](netflix_db_ss/02-1_Autoloader-readstream-cloudfiles.png) |
-| `writeStream` — checkpoint + `trigger(availableNow=True)` into Bronze | ![Autoloader writeStream](netflix_db_ss/03-1_Autoloader-writestream-trigger-availablenow.png) |
-| Bronze Delta read-back — confirms data landed | ![Bronze Output](netflix_db_ss/04-bronze-netflix-titles-display-output.png) |
+| Notebook overview — catalog/schema setup, checkpoint path | ![Notebook Overview](screenshots/netflix_db_ss/01-notebooks-overview-1_Autoloader-createschema-checkpoint.png) |
+| `readStream` with Autoloader (`cloudFiles`, schema tracking) | ![Autoloader readStream](screenshots/netflix_db_ss/02-1_Autoloader-readstream-cloudfiles.png) |
+| `writeStream` — checkpoint + `trigger(availableNow=True)` into Bronze | ![Autoloader writeStream](screenshots/netflix_db_ss/03-1_Autoloader-writestream-trigger-availablenow.png) |
+| Bronze Delta read-back — confirms data landed | ![Bronze Output](screenshots/netflix_db_ss/04-bronze-netflix-titles-display-output.png) |
 
 ```python
 df = spark.readStream \
@@ -124,12 +124,12 @@ Two jobs coordinate the Silver layer, backed by five notebooks:
 
 | Step | Screenshot |
 |---|---|
-| Job run — both tasks succeeded, ForEach looped 4× | ![Bronze to Silver Load Run](netflix_db_ss/18-workflow-bronze-to-silver-load-run-graph.png) |
-| Job task graph detail | ![Bronze to Silver Load Tasks](netflix_db_ss/19-job-bronze-to-silver-load-tasks-details.png) |
-| `3_Silverlookup` — builds the files array | ![Files Array](netflix_db_ss/13-3_Silverlookup-files-array.png) |
-| `3_Silverlookup` — publishes the array via `taskValues.set` | ![taskValues.set Array](netflix_db_ss/15-3_Silverlookup-taskvalues-set-array.png) |
-| `2_Silver` — widgets + dynamic Bronze read | ![2_Silver Widgets](netflix_db_ss/12-2_Silver-widgets-lookup-read-csv.png) |
-| `2_Silver`/lookup write — append mode into Silver | ![Lookup Write Append](netflix_db_ss/14-3_Silverlookup-write-delta-append.png) |
+| Job run — both tasks succeeded, ForEach looped 4× | ![Bronze to Silver Load Run](screenshots/netflix_db_ss/18-workflow-bronze-to-silver-load-run-graph.png) |
+| Job task graph detail | ![Bronze to Silver Load Tasks](screenshots/netflix_db_ss/19-job-bronze-to-silver-load-tasks-details.png) |
+| `3_Silverlookup` — builds the files array | ![Files Array](screenshots/netflix_db_ss/13-3_Silverlookup-files-array.png) |
+| `3_Silverlookup` — publishes the array via `taskValues.set` | ![taskValues.set Array](screenshots/netflix_db_ss/15-3_Silverlookup-taskvalues-set-array.png) |
+| `2_Silver` — widgets + dynamic Bronze read | ![2_Silver Widgets](screenshots/netflix_db_ss/12-2_Silver-widgets-lookup-read-csv.png) |
+| `2_Silver`/lookup write — append mode into Silver | ![Lookup Write Append](screenshots/netflix_db_ss/14-3_Silverlookup-write-delta-append.png) |
 
 ### 4b. Job: "Silver Load titles" — weekday-gated master data
 
@@ -137,10 +137,10 @@ Two jobs coordinate the Silver layer, backed by five notebooks:
 
 | Step | Screenshot |
 |---|---|
-| Job task graph — WeekdayLookup → If/Else → two branches | ![Silver Load Titles Tasks](netflix_db_ss/20-job-silver-load-titles-ifelse-tasks.png) |
-| Job run — False branch taken, succeeded | ![Silver Load Titles Run](netflix_db_ss/21-job-silver-load-titles-run-false-branch-success.png) |
-| `5_Silverlookup` — weekday widget + `taskValues.set` | ![Weekday Widget](netflix_db_ss/16-5_Silverlookup-weekday-widget-taskvalues-set.png) |
-| `6_Silver_print` — reads it back with `taskValues.get` | ![taskValues.get](netflix_db_ss/17-6_Silver_print-taskvalues-get-weekoutput.png) |
+| Job task graph — WeekdayLookup → If/Else → two branches | ![Silver Load Titles Tasks](screenshots/netflix_db_ss/20-job-silver-load-titles-ifelse-tasks.png) |
+| Job run — False branch taken, succeeded | ![Silver Load Titles Run](screenshots/netflix_db_ss/21-job-silver-load-titles-run-false-branch-success.png) |
+| `5_Silverlookup` — weekday widget + `taskValues.set` | ![Weekday Widget](screenshots/netflix_db_ss/16-5_Silverlookup-weekday-widget-taskvalues-set.png) |
+| `6_Silver_print` — reads it back with `taskValues.get` | ![taskValues.get](screenshots/netflix_db_ss/17-6_Silver_print-taskvalues-get-weekoutput.png) |
 
 ```python
 # 5_Silverlookup
@@ -157,13 +157,13 @@ print(var)
 
 | Step | Screenshot |
 |---|---|
-| Read Bronze `netflix_titles` as Delta | ![Read Bronze Delta](netflix_db_ss/11-4_Silver_transformation-read-bronze-delta.png) |
-| `rating` column — split on `-` to drop qualifiers | ![Rating Split](netflix_db_ss/06-4_Silver_transformation-rating-split.png) |
-| `duration_minutes`/`duration_seasons` cast to Integer + schema check | ![Duration Cast](netflix_db_ss/07-4_Silver_transformation-duration-cast-printschema.png) |
-| `title` → `shorttitle` split (drops the subtitle after `:`) | ![Shorttitle Split](netflix_db_ss/08-4_Silver_transformation-shorttitle-split.png) |
-| `groupBy("type").agg(count)` — sanity-check row counts by Movie/TV Show | ![GroupBy Count](netflix_db_ss/09-4_Silver_transformation-groupby-agg-count.png) |
-| Temp view + SQL query against the cleaned frame | ![Temp View SQL](netflix_db_ss/10-4_Silver_transformation-tempview-sql-query.png) |
-| Final write — Delta, overwrite, into `silver/netflix_titles` | ![Silver Write Overwrite](netflix_db_ss/05-4_Silver_transformation-write-delta-overwrite.png) |
+| Read Bronze `netflix_titles` as Delta | ![Read Bronze Delta](screenshots/netflix_db_ss/11-4_Silver_transformation-read-bronze-delta.png) |
+| `rating` column — split on `-` to drop qualifiers | ![Rating Split](screenshots/netflix_db_ss/06-4_Silver_transformation-rating-split.png) |
+| `duration_minutes`/`duration_seasons` cast to Integer + schema check | ![Duration Cast](screenshots/netflix_db_ss/07-4_Silver_transformation-duration-cast-printschema.png) |
+| `title` → `shorttitle` split (drops the subtitle after `:`) | ![Shorttitle Split](screenshots/netflix_db_ss/08-4_Silver_transformation-shorttitle-split.png) |
+| `groupBy("type").agg(count)` — sanity-check row counts by Movie/TV Show | ![GroupBy Count](screenshots/netflix_db_ss/09-4_Silver_transformation-groupby-agg-count.png) |
+| Temp view + SQL query against the cleaned frame | ![Temp View SQL](screenshots/netflix_db_ss/10-4_Silver_transformation-tempview-sql-query.png) |
+| Final write — Delta, overwrite, into `silver/netflix_titles` | ![Silver Write Overwrite](screenshots/netflix_db_ss/05-4_Silver_transformation-write-delta-overwrite.png) |
 
 ---
 
@@ -173,15 +173,15 @@ Pipeline **"Gold Load"**, built in notebook `7_DLT_Gold`. Four lookup tables str
 
 | Step | Screenshot |
 |---|---|
-| Pipeline DAG — all 7 tables, completed run | ![Gold DAG](netflix_db_ss/22-dlt-gold-load-pipeline-dag-completed.png) |
-| Pipeline details panel | ![Pipeline Details](netflix_db_ss/23-dlt-gold-load-pipeline-details-panel.png) |
-| Tables list — output counts + expectation status | ![Tables List](netflix_db_ss/24-dlt-gold-load-tables-list-expectations.png) |
-| Code — imports + shared `expect_all_or_drop` rule set | ![DLT Imports](netflix_db_ss/25-dlt-7_DLT_Gold-code-import-lookuptables-rules.png) |
-| `gold_netflix_directors` / `gold_netflix_cast` table defs | ![Directors/Cast](netflix_db_ss/26-dlt-7_DLT_Gold-directors-cast-table-defs.png) |
-| `gold_netflix_countries` / `gold_netflix_category` table defs | ![Countries/Category](netflix_db_ss/27-dlt-7_DLT_Gold-countries-category-table-defs.png) |
-| `gold_netflix_titles_stg` → `gold_netflix_titles_trans` view | ![Titles Staging/View](netflix_db_ss/28-dlt-7_DLT_Gold-titles-stg-view-pattern.png) |
-| `gold_netflix_titles` — final table with masterdata rules | ![Titles Final](netflix_db_ss/29-dlt-7_DLT_Gold-titles-masterdata-rules-final.png) |
-| Query proof — `gold_netflix_directors` populated | ![Query Result](netflix_db_ss/30-dlt-gold-directors-query-result.png) |
+| Pipeline DAG — all 7 tables, completed run | ![Gold DAG](screenshots/netflix_db_ss/22-dlt-gold-load-pipeline-dag-completed.png) |
+| Pipeline details panel | ![Pipeline Details](screenshots/netflix_db_ss/23-dlt-gold-load-pipeline-details-panel.png) |
+| Tables list — output counts + expectation status | ![Tables List](screenshots/netflix_db_ss/24-dlt-gold-load-tables-list-expectations.png) |
+| Code — imports + shared `expect_all_or_drop` rule set | ![DLT Imports](screenshots/netflix_db_ss/25-dlt-7_DLT_Gold-code-import-lookuptables-rules.png) |
+| `gold_netflix_directors` / `gold_netflix_cast` table defs | ![Directors/Cast](screenshots/netflix_db_ss/26-dlt-7_DLT_Gold-directors-cast-table-defs.png) |
+| `gold_netflix_countries` / `gold_netflix_category` table defs | ![Countries/Category](screenshots/netflix_db_ss/27-dlt-7_DLT_Gold-countries-category-table-defs.png) |
+| `gold_netflix_titles_stg` → `gold_netflix_titles_trans` view | ![Titles Staging/View](screenshots/netflix_db_ss/28-dlt-7_DLT_Gold-titles-stg-view-pattern.png) |
+| `gold_netflix_titles` — final table with masterdata rules | ![Titles Final](screenshots/netflix_db_ss/29-dlt-7_DLT_Gold-titles-masterdata-rules-final.png) |
+| Query proof — `gold_netflix_directors` populated | ![Query Result](screenshots/netflix_db_ss/30-dlt-gold-directors-query-result.png) |
 
 ```python
 lookuptables_rules = {"rule1": "show_id is NOT NULL"}
@@ -217,9 +217,9 @@ def gold_netflix_titles():
 
 | Step | Screenshot |
 |---|---|
-| Access Connector for Azure Databricks (`access_netflix`) | ![Access Connector](netflix_setup_ss/02-access-connector-overview.png) |
-| Storage Credential (`ash_creds`) — wraps the connector's managed identity | ![Storage Credential](netflix_db_ss/31-unitycatalog-external-data-credentials.png) |
-| External Locations — `raw` / `bronze` / `silver` / `gold`, all on `ash_creds` | ![External Locations](netflix_db_ss/32-unitycatalog-external-locations-all-4.png) |
+| Access Connector for Azure Databricks (`access_netflix`) | ![Access Connector](screenshots/netflix_setup_ss/02-access-connector-overview.png) |
+| Storage Credential (`ash_creds`) — wraps the connector's managed identity | ![Storage Credential](screenshots/netflix_db_ss/31-unitycatalog-external-data-credentials.png) |
+| External Locations — `raw` / `bronze` / `silver` / `gold`, all on `ash_creds` | ![External Locations](screenshots/netflix_db_ss/32-unitycatalog-external-locations-all-4.png) |
 
 Unity Catalog reaches the data lake through the Access Connector (a managed identity) rather than embedded storage keys. One **External Location** per container points at its `abfss://` path and is backed by the same **Storage Credential**, so every Bronze/Silver/Gold read or write in every notebook above goes through this single, centrally governed identity. Tables live in `netflix_catalog.netflix_elt_schema`.
 
