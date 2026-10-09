@@ -1,6 +1,41 @@
 # Netflix Azure Data Engineering Project
 
-An end-to-end Azure data platform built around a simulated Netflix dataset — ingestion with Azure Data Factory, incremental Bronze/Silver/Gold layering on ADLS Gen2, Databricks Autoloader for streaming ingestion, Databricks Workflows for orchestration (ForEach + If/Else branching), and a governed Gold layer built with Delta Live Tables under Unity Catalog.
+![Azure Data Factory](https://img.shields.io/badge/Azure_Data_Factory-0078D4?style=for-the-badge&logo=microsoftazure&logoColor=white)
+![Databricks](https://img.shields.io/badge/Databricks-FF3621?style=for-the-badge&logo=databricks&logoColor=white)
+![Delta Lake](https://img.shields.io/badge/Delta_Lake-00ADD8?style=for-the-badge&logo=delta&logoColor=white)
+![Unity Catalog](https://img.shields.io/badge/Unity_Catalog-00A972?style=for-the-badge)
+![ADLS Gen2](https://img.shields.io/badge/ADLS_Gen2-0078D4?style=for-the-badge&logo=microsoftazure&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![Power BI](https://img.shields.io/badge/Power_BI-F2C811?style=for-the-badge&logo=powerbi&logoColor=black)
+
+A full Azure data pipeline built on a sample Netflix dataset. Azure Data Factory pulls in the data, it moves through Bronze/Silver/Gold stages on ADLS Gen2 (loaded incrementally with Databricks Autoloader), Databricks Workflows handle the orchestration (looping through tables, and branching to skip steps when not needed), and the final Gold layer is built and governed with Delta Live Tables under Unity Catalog.
+
+## Project Overview
+
+### The Problem
+
+New data doesn't all show up the same way. Some files (the lookup tables) get added or updated on their own schedule. The full title dataset only needs a heavy cleanup once a week, not every time the pipeline runs. And if the pipeline doesn't check that a file actually arrived before processing it, it'll quietly process bad or missing data without anyone noticing.
+
+### The Solution
+
+Only process what's new, only do the expensive work when it's actually needed, and always check the data before trusting it. One pipeline loops through all the lookup tables instead of needing a separate pipeline for each one. Autoloader keeps track of what's already been loaded, so re-runs don't reprocess the same files. An If/Else check means the full title cleanup only runs once a week. And Delta Live Tables checks each row before it reaches the Gold layer, so bad data gets dropped instead of breaking a report downstream.
+
+| Technique | First principle |
+|---|---|
+| `ForEach`-driven ADF pipeline (`p_array`) | One pipeline, driven by metadata — a new lookup table is config, not a new pipeline |
+| Validation activity gates the run | Don't process downstream until the source file has actually landed |
+| Autoloader (`cloudFiles`) incremental ingestion | Process each file once; adapt to schema changes automatically, no full reprocessing |
+| If/Else weekday gate on the heavy Silver job | Don't pay the cost of a full master-data rebuild every run — only when it's actually needed |
+| `taskValues` (array hand-off, weekday flag) | Pass state between tasks without hardcoding values or standing up external state storage |
+| DLT expectations (`expect_all_or_drop`) | Bad rows get dropped before they reach Gold, not discovered after a report breaks |
+| Staging → view → final table pattern (titles) | Separate "landed" from "business-ready" so each stage's quality rule is explicit |
+| Keyless governance (Access Connector + Unity Catalog) | Identity grants access — no keys to leak |
+
+Same rule everywhere: the pipeline does more work only when the data actually demands it — never on a fixed schedule regardless of need.
+
+### Why This Stands Out
+
+Every technique here earns its place by making the pipeline cheaper to run or safer to trust, not by checking a box. The weekday gate means the full master-data transformation — the most expensive Silver job — runs once a week instead of on every trigger, without a separate scheduler or manual toggle. The `ForEach` array pattern means adding a fifth lookup table is a one-line config change, not a new pipeline or a new notebook. Delta Live Tables expectations catch bad rows at the Gold boundary, where a silent failure would otherwise surface as a wrong number in a Power BI report days later. Unity Catalog's Access Connector removes storage keys from every notebook and pipeline entirely. Together, these are the choices that keep the pipeline efficient and trustworthy as more sources get added — not just working once, but working well as it grows.
 
 ## Architecture Overview
 
@@ -22,27 +57,6 @@ All resources live in a single resource group (`RG-NetflixProject`):
 | `netflixprojectdatalake` | ADLS Gen2 storage account — `raw` / `bronze` / `silver` / `gold` containers |
 | `netflix_adb` | Azure Databricks workspace — Autoloader, Workflows, Delta Live Tables, Unity Catalog |
 | `access_netflix` | Access Connector for Azure Databricks — lets Unity Catalog read/write the data lake via managed identity |
-
-**Data flow:**
-
-```
-GitHub (source CSVs)
-      │  ADF HTTP linked service — ForEach + Copy Activity
-      ▼
-raw (ADLS Gen2)
-      │  Databricks Autoloader (cloudFiles, schema evolution + checkpointing)
-      ▼
-bronze (ADLS Gen2, landed data)
-      │  Databricks Workflows — parameterized Silver notebooks (ForEach + If/Else)
-      ▼
-silver (ADLS Gen2, cleaned Delta tables)
-      │  Delta Live Tables (expectations, staging → view → final pattern)
-      ▼
-gold (Unity Catalog managed/external Delta tables)
-      │  Partner Connect + SQL Warehouse
-      ▼
-Power BI
-```
 
 ---
 
